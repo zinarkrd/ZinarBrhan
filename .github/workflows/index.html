@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kurdish History Timeline | Mêjûya Kurdî</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800&family=Inter:wght@300;400;500;600&family=Noto+Naskh+Arabic:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --kurdish-red: #CE1126;
+            --kurdish-white: #FFFFFF;
+            --kurdish-green: #009E49;
+            --gold: #D4AF37;
+            --deep-red: #8B0000;
+            --dark-bg: #1a1a1a;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark-bg);
+            color: #e5e5e5;
+            overflow-x: hidden;
+        }
+        
+        .kurdish-font {
+            font-family: 'Cinzel', serif;
+        }
+        
+        .arabic-font {
+            font-family: 'Noto Naskh Arabic', serif;
+        }
+        
+        .timeline-line {
+            background: linear-gradient(to bottom, var(--kurdish-red), var(--gold), var(--kurdish-green));
+        }
+        
+        .event-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        
+        .event-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .event-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(206, 17, 38, 0.3);
+        }
+        
+        .flag-accent {
+            background: linear-gradient(135deg, var(--kurdish-red) 0%, var(--kurdish-red) 33%, var(--kurdish-white) 33%, var(--kurdish-white) 66%, var(--kurdish-green) 66%);
+        }
+        
+        .hero-pattern {
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(206, 17, 38, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0, 158, 73, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(212, 175, 55, 0.1) 0%, transparent 50%);
+        }
+        
+        .sun-emblem {
+            background: radial-gradient(circle, var(--gold) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+        
+        .text-gradient {
+            background: linear-gradient(135deg, var(--gold), #fff, var(--kurdish-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .filter-btn.active {
+            background-color: var(--kurdish-red);
+            color: white;
+            border-color: var(--kurdish-red);
+        }
+        
+        .modal {
+            backdrop-filter: blur(10px);
+            background: rgba(26, 26, 26, 0.95);
+        }
+        
+        .scroll-indicator {
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+        
+        .image-hover {
+            overflow: hidden;
+        }
+        
+        .image-hover img {
+            transition: transform 0.6s ease;
+        }
+        
+        .image-hover:hover img {
+            transform: scale(1.1);
+        }
+        
+        .date-badge {
+            background: linear-gradient(135deg, var(--kurdish-red), var(--deep-red));
+            box-shadow: 0 4px 15px rgba(206, 17, 38, 0.4);
+        }
+        
+        .nav-blur {
+            backdrop-filter: blur(12px);
+            background: rgba(26, 26, 26, 0.85);
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(var(--kurdish-red), var(--kurdish-green));
+            border-radius: 5px;
+        }
+        
+        .category-ancient { border-left: 4px solid #D4AF37; }
+        .category-medieval { border-left: 4px solid #CE1126; }
+        .category-ottoman { border-left: 4px solid #009E49; }
+        .category-modern { border-left: 4px solid #6B46C1; }
+        .category-contemporary { border-left: 4px solid #F59E0B; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 nav-blur border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 rounded-full sun-emblem flex items-center justify-center">
+                        <i data-lucide="sun" class="w-5 h-5 text-yellow-900"></i>
+                    </div>
+                    <span class="kurdish-font text-xl font-bold text-white tracking-wider">Mêjû<span class="text-red-500">.</span>Kurd</span>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="#timeline" class="text-sm font-medium text-gray-300 hover:text-white transition-colors">Timeline</a>
+                    <a href="#regions" class="text-sm font-medium text-gray-300 hover:text-white transition-colors">Regions</a>
+                    <a href="#culture" class="text-sm font-medium text-gray-300 hover:text-white transition-colors">Culture</a>
+                    <button onclick="scrollToTop()" class="text-sm font-medium text-gray-300 hover:text-white transition-colors">
+                        <i data-lucide="arrow-up" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center justify-center hero-pattern overflow-hidden pt-16">
+        <div class="absolute inset-0 opacity-20">
+            <div class="absolute top-20 left-10 w-64 h-64 bg-red-600 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-20 right-10 w-96 h-96 bg-green-600 rounded-full blur-3xl"></div>
+        </div>
+        
+        <div class="relative z-10 text-center px-4 max-w-5xl mx-auto">
+            <div class="mb-6 inline-block">
+                <div class="w-24 h-24 mx-auto mb-4 rounded-full sun-emblem flex items-center justify-center border-2 border-yellow-600/50">
+                    <i data-lucide="sun" class="w-12 h-12 text-yellow-400"></i>
+                </div>
+            </div>
+            <h1 class="kurdish-font text-5xl md:text-7xl font-bold mb-6 text-gradient leading-tight">
+                The Kurdish Story
+            </h1>
+            <p class="text-xl md:text-2xl text-gray-400 mb-4 arabic-font" dir="rtl">
+                مێژووی کوردستان
+            </p>
+            <p class="text-lg text-gray-300 max-w-2xl mx-auto mb-12 leading-relaxed">
+                Journey through millennia of resilience, culture, and the unbroken spirit of the Kurdish people. From ancient civilizations to modern struggles for recognition.
+            </p>
+            
+            <div class="flex flex-wrap justify-center gap-4 mb-12">
+                <div class="px-6 py-3 bg-white/5 backdrop-blur-sm rounded-full border border-white/10">
+                    <span class="text-red-400 font-bold">4,000+</span> <span class="text-gray-400 text-sm">Years of History</span>
+                </div>
+                <div class="px-6 py-3 bg-white/5 backdrop-blur-sm rounded-full border border-white/10">
+                    <span class="text-yellow-400 font-bold">40M+</span> <span class="text-gray-400 text-sm">People Worldwide</span>
+                </div>
+                <div class="px-6 py-3 bg-white/5 backdrop-blur-sm rounded-full border border-white/10">
+                    <span class="text-green-400 font-bold">4</span> <span class="text-gray-400 text-sm">Main Regions</span>
+                </div>
+            </div>
+
+            <button onclick="document.getElementById('timeline').scrollIntoView({behavior: 'smooth'})" 
+                    class="scroll-indicator inline-flex flex-col items-center text-gray-400 hover:text-white transition-colors">
+                <span class="text-sm mb-2">Explore History</span>
+                <i data-lucide="chevron-down" class="w-6 h-6"></i>
+            </button>
+        </div>
+
+        <div class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#1a1a1a] to-transparent"></div>
+    </section>
+
+    <!-- Filter Section -->
+    <section class="sticky top-16 z-40 bg-[#1a1a1a]/95 backdrop-blur-md border-b border-white/5 py-4">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex flex-wrap justify-center gap-2" id="filterContainer">
+                <button class="filter-btn active px-4 py-2 rounded-full text-sm font-medium border border-white/20 text-gray-300 hover:bg-white/10 transition-all" data-filter="all">
+                    All Periods
+                </button>
+                <button class="filter-btn px-4 py-2 rounded-full text-sm font-medium border border-white/20 text-gray-300 hover:bg-white/10 transition-all" data-filter="ancient">
+                    Ancient Era
+                </button>
+                <button class="filter-btn px-4 py-2 rounded-full text-sm font-medium border border-white/20 text-gray-300 hover:bg-white/10 transition-all" data-filter="medieval">
+                    Medieval Period
+                </button>
+                <button class="filter-btn px-4 py-2 rounded-full text-sm font-medium border border-white/20 text-gray-300 hover:bg-white/10 transition-all" data-filter="ottoman">
+                    Ottoman Era
+                </button>
+                <button class="filter-btn px-4 py-2 rounded-full text-sm font-medium border border-white/20 text-gray-300 hover:bg-white/10 transition-all" data-filter="modern">
+                    Modern Era
+                </button>
+                <button class="filter-btn px-4 py-2 rounded-full text-sm font-medium border border-white/20 text-gray-300 hover:bg-white/10 transition-all" data-filter="contemporary">
+                    Contemporary
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Timeline Section -->
+    <section id="timeline" class="py-20 relative">
+        <div class="max-w-6xl mx-auto px-4">
+            
+            <!-- Timeline Line -->
+            <div class="absolute left-1/2 transform -translate-x-1/2 w-1 h-full timeline-line hidden md:block"></div>
+
+            <!-- Events Container -->
+            <div id="eventsContainer" class="space-y-12 relative">
+                <!-- Events will be populated by JavaScript -->
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="py-20 bg-black/30 border-y border-white/5">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                <div class="p-6">
+                    <div class="text-4xl font-bold text-red-500 mb-2 kurdish-font" id="stat1">0</div>
+                    <div class="text-sm text-gray-400">Years of Recorded History</div>
+                </div>
+                <div class="p-6">
+                    <div class="text-4xl font-bold text-yellow-500 mb-2 kurdish-font" id="stat2">0</div>
+                    <div class="text-sm text-gray-400">Kurdish Dialects</div>
+                </div>
+                <div class="p-6">
+                    <div class="text-4xl font-bold text-green-500 mb-2 kurdish-font" id="stat3">0</div>
+                    <div class="text-sm text-gray-400">Countries (Kurdistan Divided)</div>
+                </div>
+                <div class="p-6">
+                    <div class="text-4xl font-bold text-purple-500 mb-2 kurdish-font" id="stat4">0</div>
+                    <div class="text-sm text-gray-400">Major Revolts & Uprisings</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Regions Section -->
+    <section id="regions" class="py-20">
+        <div class="max-w-7xl mx-auto px-4">
+            <h2 class="kurdish-font text-4xl font-bold text-center mb-4 text-gradient">Four Parts of Kurdistan</h2>
+            <p class="text-center text-gray-400 mb-12 max-w-2xl mx-auto">The Kurdish homeland, divided by modern borders but united by culture, language, and history.</p>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="group relative overflow-hidden rounded-xl bg-gradient-to-b from-red-900/20 to-transparent border border-red-500/20 p-6 hover:border-red-500/50 transition-all cursor-pointer" onclick="showRegionInfo('bakur')">
+                    <div class="absolute top-0 right-0 w-20 h-20 bg-red-500/10 rounded-full blur-2xl group-hover:bg-red-500/20 transition-all"></div>
+                    <h3 class="text-2xl font-bold text-red-400 mb-2">Bakûr</h3>
+                    <p class="text-sm text-gray-400 mb-4">Northern Kurdistan</p>
+                    <p class="text-gray-300 text-sm">Southeastern Turkey - The largest Kurdish population center, including cities like Diyarbakır (Amed), Van, and Hakkari.</p>
+                    <div class="mt-4 flex items-center text-red-400 text-sm font-medium">
+                        <span>Explore</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform"></i>
+                    </div>
+                </div>
+
+                <div class="group relative overflow-hidden rounded-xl bg-green-900/20 to-transparent border border-green-500/20 p-6 hover:border-green-500/50 transition-all cursor-pointer" onclick="showRegionInfo('bashur')">
+                    <div class="absolute top-0 right-0 w-20 h-20 bg-green-500/10 rounded-full blur-2xl group-hover:bg-green-500/20 transition-all"></div>
+                    <h3 class="text-2xl font-bold text-green-400 mb-2">Başûr</h3>
+                    <p class="text-sm text-gray-400 mb-4">Southern Kurdistan</p>
+                    <p class="text-gray-300 text-sm">Northern Iraq - Home to the Kurdistan Regional Government (KRG), including Erbil (Hewlêr), Sulaymaniyah, and Duhok.</p>
+                    <div class="mt-4 flex items-center text-green-400 text-sm font-medium">
+                        <span>Explore</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform"></i>
+                    </div>
+                </div>
+
+                <div class="group relative overflow-hidden rounded-xl bg-blue-900/20 to-transparent border border-blue-500/20 p-6 hover:border-blue-500/50 transition-all cursor-pointer" onclick="showRegionInfo('rojava')">
+                    <div class="absolute top-0 right-0 w-20 h-20 bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/20 transition-all"></div>
+                    <h3 class="text-2xl font-bold text-blue-400 mb-2">Rojava</h3>
+                    <p class="text-sm text-gray-400 mb-4">Western Kurdistan</p>
+                    <p class="text-gray-300 text-sm">Northern Syria - Including Kobanî, Qamishli, and Afrin. Center of the autonomous administration experiment.</p>
+                    <div class="mt-4 flex items-center text-blue-400 text-sm font-medium">
+                        <span>Explore</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform"></i>
+                    </div>
+                </div>
+
+                <div class="group relative overflow-hidden rounded-xl bg-yellow-900/20 to-transparent border border-yellow-500/20 p-6 hover:border-yellow-500/50 transition-all cursor-pointer" onclick="showRegionInfo('rojhelat')">
+                    <div class="absolute top-0 right-0 w-20 h-20 bg-yellow-500/10 rounded-full blur-2xl group-hover:bg-yellow-500/20 transition-all"></div>
+                    <h3 class="text-2xl font-bold text-yellow-400 mb-2">Rojhilat</h3>
+                    <p class="text-sm text-gray-400 mb-4">Eastern Kurdistan</p>
+                    <p class="text-gray-300 text-sm">Northwestern Iran - Including Kurdistan Province, Kermanshah, and West Azerbaijan provinces.</p>
+                    <div class="mt-4 flex items-center text-yellow-400 text-sm font-medium">
+                        <span>Explore</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cultural Elements -->
+    <section id="culture" class="py-20 bg-gradient-to-b from-transparent to-black/50">
+        <div class="max-w-7xl mx-auto px-4">
+            <h2 class="kurdish-font text-4xl font-bold text-center mb-12 text-gradient">Cultural Heritage</h2>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white/5 rounded-2xl p-8 border border-white/10 hover:bg-white/10 transition-all">
+                    <div class="w-12 h-12 bg-red-500/20 rounded-lg flex items-center justify-center mb-4">
+                        <i data-lucide="music" class="w-6 h-6 text-red-400"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-white">Music & Dengbêj</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        The dengbêj tradition of oral history telling through song, preserving centuries of Kurdish history, love stories, and heroic epics without written records.
+                    </p>
+                </div>
+
+                <div class="bg-white/5 rounded-2xl p-8 border border-white/10 hover:bg-white/10 transition-all">
+                    <div class="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center mb-4">
+                        <i data-lucide="mountain" class="w-6 h-6 text-green-400"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-white">Newroz</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        The Persian New Year celebrated on March 21st, marking the arrival of spring and the legend of Kawa the Blacksmith's victory over the tyrant Zahhak.
+                    </p>
+                </div>
+
+                <div class="bg-white/5 rounded-2xl p-8 border border-white/10 hover:bg-white/10 transition-all">
+                    <div class="w-12 h-12 bg-yellow-500/20 rounded-lg flex items-center justify-center mb-4">
+                        <i data-lucide="book-open" class="w-6 h-6 text-yellow-400"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-white">Language</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Kurdish belongs to the Iranian branch of Indo-European languages, with two main dialects: Kurmanji (Northern) and Sorani (Central), plus Gorani and Zazaki.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black/50 border-t border-white/10 py-12 mt-20">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <div class="flex justify-center items-center space-x-3 mb-6">
+                <div class="w-8 h-8 rounded-full sun-emblem flex items-center justify-center">
+                    <i data-lucide="sun" class="w-5 h-5 text-yellow-900"></i>
+                </div>
+                <span class="kurdish-font text-xl font-bold text-white">Mêjûya Kurdistanê</span>
+            </div>
+            <p class="text-gray-500 text-sm">
+                Preserving the history and heritage of the Kurdish people.<br>
+                <span class="arabic-font mt-2 block" dir="rtl">بۆ پاراستنی مێژوو و کەلتووری گەلی کورد</span>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Modal for detailed view -->
+    <div id="detailModal" class="fixed inset-0 z-50 hidden modal flex items-center justify-center p-4">
+        <div class="absolute inset-0" onclick="closeModal()"></div>
+        <div class="relative bg-[#1a1a1a] border border-white/20 rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl transform transition-all">
+            <button onclick="closeModal()" class="absolute top-4 right-4 p-2 hover:bg-white/10 rounded-full transition-colors z-10">
+                <i data-lucide="x" class="w-6 h-6 text-gray-400"></i>
+            </button>
+            <div id="modalContent">
+                <!-- Content populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Kurdish History Data
+        const historyEvents = [
+            {
+                id: 1,
+                date: "c. 2000 BCE",
+                year: -2000,
+                title: "The Mittani Kingdom",
+                category: "ancient",
+                description: "The emergence of the Mittani Empire in northern Mesopotamia, considered by many scholars as an early Kurdish precursor state. They ruled over Hurrian populations and established one of the first known Kurdish political entities.",
+                details: "The Mittani kingdom was centered in the region of modern-day Kurdistan, with its capital at Washukanni. They developed sophisticated chariot warfare and established diplomatic relations with Egypt, as evidenced by the Amarna letters. The Mittani influence spread across northern Syria and Mesopotamia.",
+                image: "https://images.unsplash.com/photo-1590422749897-8b1586a5155f?w=800&q=80",
+                location: "Northern Mesopotamia",
+                significance: "First major Kurdish political entity"
+            },
+            {
+                id: 2,
+                date: "612 BCE",
+                year: -612,
+                title: "Fall of Nineveh",
+                category: "ancient",
+                description: "The Medes (ancestors of Kurds) allied with Babylonians to destroy the Assyrian capital of Nineveh, ending the Assyrian Empire and establishing Median dominance in the region.",
+                details: "This coalition marked a turning point in ancient Near Eastern history. The Medes, under Cyaxares, demonstrated military prowess that would characterize Kurdish martial traditions for millennia. The fall of Nineveh marked the beginning of the Median Empire's expansion.",
+                image: "https://images.unsplash.com/photo-1564507592333-c60657eea523?w=800&q=80",
+                location: "Nineveh, Assyria",
+                significance: "End of Assyrian dominance, rise of Median power"
+            },
+            {
+                id: 3,
+                date: "401 BCE",
+                year: -401,
+                title: "Battle of Cunaxa",
+                category: "ancient",
+                description: "Kurdish warriors fought as mercenaries in the conflict between Cyrus the Younger and Artaxerxes II. Xenophon's Anabasis documents the 'Carduchi' (Kurds) as fierce mountain warriors.",
+                details: "Xenophon's retreat through Kurdistan (the 'Carduchian mountains') provides one of the earliest detailed Western accounts of Kurdish people. He described them as autonomous mountain dwellers who fiercely resisted Persian control and conducted guerrilla warfare.",
+                image: "https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=800&q=80",
+                location: "Babylonia/Kurdistan border",
+                significance: "Earliest Western documentation of Kurdish identity"
+            },
+            {
+                id: 4,
+                date: "7th Century CE",
+                year: 637,
+                title: "Islamic Conquest",
+                category: "medieval",
+                description: "The Muslim conquest of Persia brought Islam to Kurdistan. Kurdish tribes gradually converted to Islam while maintaining distinct cultural and linguistic identity.",
+                details: "Unlike other regions, Kurdistan maintained significant autonomy under early Islamic caliphates. Kurdish tribes often served as auxiliary forces in Islamic armies while preserving their tribal structures and mountain strongholds.",
+                image: "https://images.unsplash.com/photo-1542401886-65d6c61db217?w=800&q=80",
+                location: "Kurdistan Region",
+                significance: "Integration into Islamic civilization while preserving identity"
+            },
+            {
+                id: 5,
+                date: "12th Century",
+                year: 1187,
+                title: "Saladin's Rise",
+                category: "medieval",
+                description: "Saladin (Salah ad-Din Yusuf ibn Ayyub), a Kurdish Muslim leader, recaptured Jerusalem from the Crusaders and established the Ayyubid dynasty.",
+                details: "Born in Tikrit (modern Iraq) to a Kurdish family, Saladin became one of history's most chivalrous military leaders. His recapture of Jerusalem in 1187 and subsequent defense against the Third Crusade (Richard the Lionheart) made him a legendary figure in both Islamic and Western history.",
+                image: "https://images.unsplash.com/photo-1566127444979-b3d2b654e3d7?w=800&q=80",
+                location: "Jerusalem/Cairo/Damascus",
+                significance: "Peak of Kurdish political power in the medieval period"
+            },
+            {
+                id: 6,
+                date: "1590",
+                year: 1590,
+                title: "Sharafnama",
+                category: "ottoman",
+                description: "Prince Sharaf Khan Bidlisi completed the Sharafnama, the first comprehensive history of the Kurdish people, written in Persian.",
+                details: "This monumental work detailed the genealogy, history, and geography of Kurdish emirates and dynasties. It remains a crucial primary source for Kurdish history, documenting the existence of over 20 semi-autonomous Kurdish principalities during this period.",
+                image: "https://images.unsplash.com/photo-1507842217121-9e962835d771?w=800&q=80",
+                location: "Ottoman Empire",
+                significance: "First systematic history of Kurdish people"
+            },
+            {
+                id: 7,
+                date: "1847",
+                year: 1847,
+                title: "Fall of the Emirates",
+                category: "ottoman",
+                description: "The last Kurdish emirates (principalities) were abolished by the Ottoman Empire, centralizing control over Kurdish territories.",
+                details: "The Bedirhan Bey revolt (1843-1847) marked the final resistance against Ottoman centralization. Despite initial successes, Ottoman forces crushed the rebellion, ending centuries of Kurdish autonomy. This led to increased Turkish and Arab settlement in Kurdish areas.",
+                image: "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=800&q=80",
+                location: "Ottoman Kurdistan",
+                significance: "End of Kurdish autonomy under Ottoman rule"
+            },
+            {
+                id: 8,
+                date: "1880",
+                year: 1880,
+                title: "Sheikh Ubeydullah Revolt",
+                category: "ottoman",
+                description: "Sheikh Ubeydullah led a major Kurdish uprising against Ottoman and Qajar Persian rule, declaring the unity of Kurdistan.",
+                details: "One of the first explicitly nationalist Kurdish revolts, Sheikh Ubeydullah declared: 'The Kurdish nation is a people apart... we want our affairs to be in our own hands.' Though ultimately defeated, it marked the beginning of modern Kurdish nationalism.",
+                image: "https://images.unsplash.com/photo-1518182170546-0766bc6f9213?w=800&q=80",
+                location: "Ottoman-Persian border",
+                significance: "First modern Kurdish nationalist uprising"
+            },
+            {
+                id: 9,
+                date: "1920",
+                year: 1920,
+                title: "Treaty of Sèvres",
+                category: "modern",
+                description: "The treaty promised an independent Kurdistan, recognizing Kurdish autonomy in Articles 62 and 64, but was never implemented.",
+                details: "Signed between the Ottoman Empire and Allied powers, the treaty provisionally recognized an independent Kurdish state. However, the subsequent Turkish War of Independence and Treaty of Lausanne (1923) replaced it, dividing Kurdistan among Turkey, Iraq, Syria, and Iran.",
+                image: "https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?w=800&q=80",
+                location: "Sèvres, France",
+                significance: "Broken promise of Kurdish independence"
+            },
+            {
+                id: 10,
+                date: "1925",
+                year: 1925,
+                title: "Sheikh Said Rebellion",
+                category: "modern",
+                description: "Sheikh Said led a major Kurdish uprising in Turkey against the secularization policies and forced assimilation of the new Turkish Republic.",
+                details: "The rebellion united religious and nationalist sentiments, attracting thousands of Kurdish fighters. Despite initial victories, Turkish military superiority crushed the revolt. Sheikh Said was executed, and severe reprisals followed, including mass deportations and bans on Kurdish language and culture.",
+                image: "https://images.unsplash.com/photo-1569683795645-b62e50fbf103?w=800&q=80",
+                location: "Diyarbakır Region, Turkey",
+                significance: "First major Kurdish-Turkish conflict in republican era"
+            },
+            {
+                id: 11,
+                date: "1946",
+                year: 1946,
+                title: "Republic of Mahabad",
+                category: "modern",
+                description: "The short-lived Kurdish Republic of Mahabad was established in Iranian Kurdistan under Qazi Muhammad, lasting only 11 months.",
+                details: "With Soviet support during their occupation of northern Iran, Kurds declared independence with Mahabad as capital. The republic had its own flag (the current Kurdish flag), army, and schools teaching in Kurdish. After Soviet withdrawal, Iranian forces crushed the republic. Qazi Muhammad was hanged.",
+                image: "https://images.unsplash.com/photo-1526666923127-b2970f64b422?w=800&q=80",
+                location: "Mahabad, Iran",
+                significance: "First and only independent Kurdish state in modern times"
+            },
+            {
+                id: 12,
+                date: "1978",
+                year: 1978,
+                title: "PKK Foundation",
+                category: "contemporary",
+                description: "Abdullah Öcalan founded the Kurdistan Workers' Party (PKK) in Turkey, launching an armed struggle for Kurdish rights that continues to shape regional politics.",
+                details: "Beginning as a Marxist-Leninist organization, the PKK launched its armed insurgency in 1984. The conflict has resulted in over 40,000 deaths and displaced millions. Despite being designated a terrorist organization by Turkey, the US, and EU, the PKK remains a significant political force.",
+                image: "https://images.unsplash.com/photo-1541872703-74c5e44368f9?w=800&q=80",
+                location: "Diyarbakır, Turkey",
+                significance: "Beginning of modern Kurdish insurgency in Turkey"
+            },
+            {
+                id: 13,
+                date: "1988",
+                year: 1988,
+                title: "Anfal Campaign & Halabja",
+                category: "contemporary",
+                description: "Saddam Hussein's regime launched the genocidal Anfal Campaign against Iraqi Kurds, culminating in the chemical attack on Halabja, killing 5,000 civilians.",
+                details: "The Anfal Campaign (1986-1989) destroyed over 4,000 villages and killed an estimated 182,000 Kurds. The Halabja attack (March 16, 1988) used mustard gas and nerve agents. This genocide was later recognized by several national parliaments, including Iraq's in 2005.",
+                image: "https://images.unsplash.com/photo-1575550959106-5a7defe28b56?w=800&q=80",
+                location: "Halabja, Iraq",
+                significance: "Genocide against Iraqi Kurds"
+            },
+            {
+                id: 14,
+                date: "1991",
+                year: 1991,
+                title: "Safe Haven & No-Fly Zone",
+                category: "contemporary",
+                description: "After the Gulf War, the US, UK, and France established a no-fly zone over Iraqi Kurdistan, creating de facto autonomy that led to today's Kurdistan Region.",
+                details: "Operation Provide Comfort protected Iraqi Kurds from Saddam's forces. This allowed the establishment of the Kurdistan Regional Government (KRG) in 1992. Though initially plagued by civil war (1994-1997) between KDP and PUK, the region has developed into the most stable and prosperous part of Iraq.",
+                image: "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=800&q=80",
+                location: "Iraqi Kurdistan",
+                significance: "Beginning of modern Kurdish autonomy in Iraq"
+            },
+            {
+                id: 15,
+                date: "2014-2017",
+                year: 2014,
+                title: "War Against ISIS",
+                category: "contemporary",
+                description: "Kurdish forces (Peshmerga, YPG, YPJ) became the primary ground forces fighting ISIS, liberating territories and gaining international recognition.",
+                details: "The siege of Kobanî (2014-2015) became a symbol of Kurdish resistance. Kurdish women fighters (YPJ) gained worldwide attention. The liberation of Mosul (2017) involved crucial Peshmerga support. However, the 2017 independence referendum (92% yes) led to Iraqi military retaliation, losing Kirkuk.",
+                image: "https://images.unsplash.com/photo-1598556776374-0a0b47f273e9?w=800&q=80",
+                location: "Syria & Iraq",
+                significance: "Kurds as primary anti-ISIS force; referendum crisis"
+            }
+        ];
+
+        // Render events
+        function renderEvents(filter = 'all') {
+            const container = document.getElementById('eventsContainer');
+            container.innerHTML = '';
+            
+            const filteredEvents = filter === 'all' 
+                ? historyEvents 
+                : historyEvents.filter(e => e.category === filter);
+            
+            filteredEvents.forEach((event, index) => {
+                const isLeft = index % 2 === 0;
+                const categoryClass = `category-${event.category}`;
+                
+                const eventHTML = `
+                    <div class="event-card flex flex-col md:flex-row items-center w-full ${isLeft ? 'md:flex-row' : 'md:flex-row-reverse'}" data-category="${event.category}">
+                        <div class="w-full md:w-1/2 ${isLeft ? 'md:pr-12 md:text-right' : 'md:pl-12 md:text-left'} mb-4 md:mb-0">
+                            <div class="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:border-white/30 transition-all cursor-pointer group ${categoryClass}" onclick="openModal(${event.id})">
+                                <div class="flex items-center ${isLeft ? 'md:justify-end' : 'md:justify-start'} mb-3 space-x-2">
+                                    <span class="date-badge px-3 py-1 rounded-full text-xs font-bold text-white">${event.date}</span>
+                                    <span class="text-xs text-gray-500 uppercase tracking-wider">${event.category}</span>
+                                </div>
+                                <h3 class="text-xl font-bold text-white mb-2 group-hover:text-red-400 transition-colors">${event.title}</h3>
+                                <p class="text-gray-400 text-sm leading-relaxed mb-4">${event.description}</p>
+                                <div class="image-hover rounded-lg overflow-hidden h-48 relative">
+                                    <img src="${event.image}" alt="${event.title}" class="w-full h-full object-cover">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                                        <span class="text-white text-sm font-medium flex items-center">
+                                            Read more <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 bg-white rounded-full border-4 border-red-600 z-10 hidden md:block"></div>
+                        
+                        <div class="w-full md:w-1/2 ${isLeft ? 'md:pl-12' : 'md:pr-12'} hidden md:block">
+                            <div class="text-6xl font-bold text-white/5 kurdish-font select-none">${Math.abs(event.year)}</div>
+                        </div>
+                    </div>
+                `;
+                
+                container.insertAdjacentHTML('beforeend', eventHTML);
+            });
+            
+            // Re-initialize icons for new content
+            lucide.createIcons();
+            
+            // Trigger animations
+            setTimeout(() => {
+                observeEvents();
+            }, 100);
+        }
+
+        // Intersection Observer for animations
+        function observeEvents() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            document.querySelectorAll('.event-card').forEach(card => {
+                observer.observe(card);
+            });
+        }
+
+        // Filter functionality
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                renderEvents(this.dataset.filter);
+            });
+        });
+
+        // Modal functions
+        function openModal(id) {
+            const event = historyEvents.find(e => e.id === id);
+            if (!event) return;
+            
+            const modal = document.getElementById('detailModal');
+            const content = document.getElementById('modalContent');
+            
+            content.innerHTML = `
+                <div class="relative">
+                    <div class="h-64 overflow-hidden rounded-t-2xl">
+                        <img src="${event.image}" alt="${event.title}" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#1a1a1a] to-transparent"></div>
+                        <div class="absolute bottom-4 left-6 right-6">
+                            <span class="date-badge px-3 py-1 rounded-full text-xs font-bold text-white mb-2 inline-block">${event.date}</span>
+                            <h2 class="text-3xl font-bold text-white kurdish-font">${event.title}</h2>
+                        </div>
+                    </div>
+                    <div class="p-6 space-y-6">
+                        <div class="flex items-center space-x-4 text-sm text-gray-400 border-b border-white/10 pb-4">
+                            <span class="flex items-center"><i data-lucide="map-pin" class="w-4 h-4 mr-1"></i> ${event.location}</span>
+                            <span class="flex items-center"><i data-lucide="star" class="w-4 h-4 mr-1"></i> ${event.significance}</span>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-white mb-2">Overview</h3>
+                            <p class="text-gray-300 leading-relaxed">${event.description}</p>
+                        </div>
+                        <div class="bg-white/5 rounded-xl p-4 border border-white/10">
+                            <h3 class="text-lg font-bold text-white mb-2">Historical Context</h3>
+                            <p class="text-gray-400 leading-relaxed text-sm">${event.details}</p>
+                        </div>
+                        <div class="flex justify-between items-center pt-4 border-t border-white/10">
+                            <span class="text-xs text-gray-500 uppercase tracking-wider">${event.category} Period</span>
+                            <button onclick="closeModal()" class="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm font-medium transition-colors">Close</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            lucide.createIcons();
+        }
+
+        function closeModal() {
+            document.getElementById('detailModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        function showRegionInfo(region) {
+            const regionData = {
+                bakur: {
+                    name: "Bakûr (Northern Kurdistan)",
+                    area: "Turkey - Approx. 20% of Turkey's land area",
+                    population: "15-20 million Kurds",
+                    capital: "Amed (Diyarbakır)",
+                    details: "The largest Kurdish population, yet until recently, Kurdish language and cultural expressions were heavily restricted. The region includes the historic cities of Amed (Diyarbakır), Mardin, and Van. The PKK insurgency has shaped politics here since 1984."
+                },
+                bashur: {
+                    name: "Başûr (Southern Kurdistan)",
+                    area: "Iraq - Officially recognized Kurdistan Region",
+                    population: "6-7 million",
+                    capital: "Hewlêr (Erbil)",
+                    details: "The only internationally recognized autonomous Kurdish region. Governed by the KRG since 1992, with its own parliament, military (Peshmerga), and oil resources. Major cities include Sulaymaniyah, Duhok, and Kirkuk (disputed)."
+                },
+                rojava: {
+                    name: "Rojava (Western Kurdistan)",
+                    area: "Northern Syria",
+                    population: "2-3 million",
+                    capital: "Qamishli/Ain Issa (de facto)",
+                    details: "Established autonomous administration during Syrian Civil War. Implemented democratic confederalism with emphasis on women's rights (YPJ) and minority protection. Threatened by Turkish military operations in Afrin, Ras al-Ayn, and ongoing tensions."
+                },
+                rojhelat: {
+                    name: "Rojhilat (Eastern Kurdistan)",
+                    area: "Northwestern Iran",
+                    population: "6-8 million Kurds",
+                    capital: "Sanandaj",
+                    details: "Includes Kurdistan Province, Kermanshah, and West Azerbaijan. Kurdish parties operate in opposition to Tehran, with periodic clashes. The region has rich cultural traditions but faces political restrictions and economic marginalization."
+                }
+            };
+            
+            const data = regionData[region];
+            alert(`${data.name}\n\nCapital: ${data.capital}\nPopulation: ${data.population}\nArea: ${data.area}\n\n${data.details}`);
+        }
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Animate statistics on scroll
+        function animateStats() {
+            const stats = [
+                { id: 'stat1', target: 4000, suffix: '+' },
+                { id: 'stat2', target: 3, suffix: '' },
+                { id: 'stat3', target: 4, suffix: '' },
+                { id: 'stat4', target: 30, suffix: '+' }
+            ];
+            
+            stats.forEach(stat => {
+                const element = document.getElementById(stat.id);
+                let current = 0;
+                const increment = stat.target / 50;
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= stat.target) {
+                        current = stat.target;
+                        clearInterval(timer);
+                    }
+                    element.textContent = Math.floor(current) + stat.suffix;
+                }, 30);
+            });
+        }
+
+        // Observe stats section
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateStats();
+                    statsObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderEvents();
+            statsObserver.observe(document.querySelector('#stat1').parentElement.parentElement);
+            
+            // Close modal on escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') closeModal();
+            });
+        });
+
+        // Smooth scroll for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
